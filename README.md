@@ -1,4 +1,4 @@
-# Storybook Addon storybook-carbon-theme
+# Storybook Addon Carbon Theme 9.1.10
 themes storybook with 4 base carbon themes, adds data-carbon-theme to provided nodes
 
 ### Development scripts
