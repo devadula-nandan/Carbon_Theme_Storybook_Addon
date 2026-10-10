@@ -1,0 +1,10 @@
+/**
+ * MANAGER STYLES ENTRY POINT
+ * Main stylesheet for Storybook manager (UI chrome)
+ * Imports theme base, sidebar, and toolbar styles
+ */
+
+@use 'theme-base';
+@use 'sidenav';
+@use 'toolbar';
+@use 'panel';

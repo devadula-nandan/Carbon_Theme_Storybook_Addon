@@ -1,5 +1,14 @@
-# Storybook Addon Carbon Theme 9.1.10
-themes storybook with 4 base carbon themes, adds data-carbon-theme to provided nodes
+# Storybook Addon storybook-carbon-theme
+themes storybook manager and preview with carbon tokens
+
+## Storybook version support
+
+Each Storybook major is supported from its own branch. `main` always tracks the latest major.
+
+| Storybook | Branch                                                                              |
+| --------- | ----------------------------------------------------------------------------------- |
+| 10.x      | [`main`](https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon/tree/main) |
+| 9.x       | [`v9`](https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon/tree/v9)     |
 
 ### Development scripts
 
@@ -121,8 +130,8 @@ const meta: Meta<typeof Button> = {
     myAddon: {
       exampleParameter: true,
       // See API section below for available parameters
-    }
-  }
+    },
+  },
 };
 
 export default meta;
@@ -153,14 +162,14 @@ registering the addon, like so:
 // .storybook/main.ts
 
 // Replace your-framework with the framework you are using (e.g., react-webpack5, vue3-vite)
-import type { StorybookConfig } from "@storybook/your-framework";
+import type { StorybookConfig } from '@storybook/your-framework';
 
 const config: StorybookConfig = {
   // ...rest of config
   addons: [
-    "@storybook/addon-docs",
+    '@storybook/addon-docs',
     {
-      name: "my-addon",
+      name: 'my-addon',
       options: {
         // 👈 options for my-addon go here
       },

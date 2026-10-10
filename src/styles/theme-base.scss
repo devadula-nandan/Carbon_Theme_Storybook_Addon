@@ -1,6 +1,6 @@
-@use "@carbon/styles/scss/theme";
-@use "@carbon/styles/scss/themes";
-@use "@carbon/styles/scss/type";
+@use '@carbon/styles/scss/theme';
+@use '@carbon/styles/scss/themes';
+@use '@carbon/styles/scss/type';
 
 /**
  * CARBON THEME BASE
@@ -17,18 +17,19 @@
  */
 
 /**
- * Default Theme
- * Applied when no theme attribute is present
- */
+   * Default Theme
+   * Applied when no theme attribute is present
+   */
 :root {
   @include theme.theme(themes.$white);
+  background-color: theme.$background;
 
   /**
    * IBM Plex Fonts - Applied when carbonized
    * Uses Carbon's type system which includes IBM Plex Sans, Mono, and Serif
    */
-  &[carbonize-storybook="true"] {
-    font-family: type.font-family("sans");
+  &[carbonize-storybook='true'] {
+    font-family: type.font-family('sans');
 
     * {
       font-family: inherit;
@@ -38,44 +39,39 @@
     pre,
     kbd,
     samp {
-      font-family: type.font-family("mono");
+      font-family: type.font-family('mono');
     }
   }
 }
 
 /**
- * White Theme (Light)
- * IBM Design Language: White background
- */
-:root[storybook-carbon-theme="white"] {
+   * White Theme (Light)
+   * IBM Design Language: White background
+   */
+:root[storybook-carbon-theme='white'] {
   @include theme.theme(themes.$white);
 }
 
 /**
- * Gray 10 Theme (Light)
- * IBM Design Language: Light gray background
- */
-:root[storybook-carbon-theme="g10"] {
+   * Gray 10 Theme (Light)
+   * IBM Design Language: Light gray background
+   */
+:root[storybook-carbon-theme='g10'] {
   @include theme.theme(themes.$g10);
 }
 
 /**
- * Gray 90 Theme (Dark)
- * IBM Design Language: Dark gray background
- */
-:root[storybook-carbon-theme="g90"] {
+   * Gray 90 Theme (Dark)
+   * IBM Design Language: Dark gray background
+   */
+:root[storybook-carbon-theme='g90'] {
   @include theme.theme(themes.$g90);
 }
 
 /**
- * Gray 100 Theme (Dark)
- * IBM Design Language: Black background
- */
-:root[storybook-carbon-theme="g100"] {
+   * Gray 100 Theme (Dark)
+   * IBM Design Language: Black background
+   */
+:root[storybook-carbon-theme='g100'] {
   @include theme.theme(themes.$g100);
-}
-
-// story page preview
-body.sb-main-padded.sb-show-main {
-  background-color: theme.$background;
 }

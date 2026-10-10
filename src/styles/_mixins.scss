@@ -1,476 +1,104 @@
-@use "sass:list";
-@use "sass:map";
-@use "@carbon/layout";
-@use "@carbon/styles/scss/theme";
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
-@use "@carbon/styles/scss/components/button/tokens" as button-tokens;
-@use "defaults";
+@use 'sass:list';
+@use 'sass:map';
+@use '@carbon/layout';
+@use '@carbon/styles/scss/theme';
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+@use '@carbon/styles/scss/components/button/tokens' as button-tokens;
+@use 'defaults';
 
-// Button size map for DRY principle
-$button-sizes: (
-  "xs": spacing.$spacing-05,
-  "sm": spacing.$spacing-06,
-  "md": spacing.$spacing-07,
-  "lg": spacing.$spacing-08,
-  "xl": spacing.$spacing-09,
-  "2xl": spacing.$spacing-10,
-);
-
-// Button kind configurations
-$button-kinds: (
-  "primary": (
-    "background": button-tokens.$button-primary,
-    "color": theme.$text-on-color,
-    "hover": button-tokens.$button-primary-hover,
-    "active": button-tokens.$button-primary-active,
-    "focus": theme.$focus-inverse,
-  ),
-  "secondary": (
-    "background": button-tokens.$button-secondary,
-    "color": theme.$text-on-color,
-    "hover": button-tokens.$button-secondary-hover,
-    "active": button-tokens.$button-secondary-active,
-    "focus": theme.$focus,
-  ),
-  "ghost": (
-    "background": transparent,
-    "color": theme.$text-primary,
-    "hover": theme.$background-hover,
-    "active": theme.$background-active,
-    "focus": theme.$focus,
-  ),
-);
-
-/**
- * Unified Button Mixin
- * Provides comprehensive button styling with all customization options
- *
- * @param {string} $size - Size level: "xs", "sm", "md", "lg", "xl", "2xl", or null to skip sizing (default: "lg")
- * @param {string} $kind - Button kind: "ghost", "primary", "secondary" (default: "ghost")
- * @param {boolean} $focus - Whether to include focus styles (default: true)
- * @param {boolean} $states - Whether to include hover/active states (default: true)
- *
- * @example Basic button with default settings
- *   @include button();
- *
- * @example Button without focus styles
- *   @include button("lg", "ghost", false);
- *
- * @example Primary button with medium size
- *   @include button("md", "primary");
- *
- * @example Button with only reset styles (no states)
- *   @include button(null, "ghost", true, false);
- */
-@mixin button($size: "lg", $kind: "ghost", $focus: true, $states: true) {
-  // Base reset styles
+@mixin button($kind: 'ghost', $size: 'lg') {
   border-radius: 0;
   box-shadow: none;
 
-  // Apply kind-specific base styles
-  $kind-config: map.get($button-kinds, $kind);
-  background-color: map.get($kind-config, "background");
-  color: map.get($kind-config, "color") !important;
+  // Kind variants map
+  $kind-styles: (
+    'primary': (
+      'color': theme.$text-on-color,
+      'background': theme.$background-brand,
+      'hover': theme.$background-brand,
+      'active': theme.$background-brand,
+      'focus': theme.$focus,
+    ),
+    'secondary': (
+      'color': theme.$text-primary,
+      'background': theme.$layer-accent,
+      'hover': theme.$layer-accent,
+      'active': theme.$layer-accent,
+      'focus': theme.$focus,
+    ),
+    'danger': (
+      'color': theme.$text-on-color,
+      'background': theme.$support-error,
+      'hover': theme.$support-error,
+      'active': theme.$support-error,
+      'focus': theme.$focus,
+    ),
+    'ghost': (
+      'color': theme.$text-primary,
+      'background': transparent,
+      'hover': theme.$layer-hover,
+      'active': theme.$layer-active,
+      'focus': theme.$focus,
+    ),
+  );
 
-  // Apply sizing if specified
-  @if $size and map.has-key($button-sizes, $size) {
-    $size-value: map.get($button-sizes, $size);
-    min-block-size: $size-value;
-    min-inline-size: $size-value;
-  }
-
-  // Apply interactive states if specified
-  @if $states {
-    &:hover {
-      background-color: map.get($kind-config, "hover") !important;
-    }
-
-    &:active {
-      background-color: map.get($kind-config, "active") !important;
-    }
-  }
-
-  // Apply focus styles if specified
-  @if $focus {
-    &:focus {
-      box-shadow: inset 0 0 0 2px map.get($kind-config, "focus") !important;
-    }
-  }
-}
-
-/**
- * Input Field Styling
- * Provides consistent styling for input elements (text, textarea, select)
- * @param {string} $layer - Layer level for the input background
- */
-@mixin input-field($layer: "layer-01") {
-  border-radius: 0;
-  box-shadow: none;
-
-  @if $layer == "layer-02" {
-    background-color: theme.$layer-02;
-  } @else {
-    background-color: theme.$layer-01;
-  }
-
-  &::placeholder {
-    color: theme.$text-secondary;
-  }
-
-  // Apply interactive states using unified button mixin
-  @include button(null, "ghost", false, true);
-
-  &:focus {
-    box-shadow: inset 0 0 0 2px theme.$focus;
-  }
-}
-
-/**
- * Border Bottom Input
- * Adds bottom border for text inputs following Carbon design pattern
- */
-@mixin input-border-bottom {
-  box-shadow: inset 0 -1px 0 theme.$border-strong-01;
-}
-
-/**
- * Focus State
- * Applies consistent focus styling across components
- * @param {string} $type - Type of focus (inset, outline)
- */
-@mixin focus-state($type: "inset") {
-  @if $type == "outline" {
-    outline: 2px solid theme.$focus;
-    outline-offset: -2px;
-  } @else {
-    box-shadow: inset 0 0 0 2px theme.$focus !important;
-  }
-}
-
-/**
- * Tab Button Styling
- * Consistent styling for tab buttons with active state indicator
- */
-@mixin tab-button {
-  @include button("lg", "ghost", false);
-  font-weight: unset;
-
-  &:focus {
-    @include focus-state("outline");
-    border-width: 2px 0;
-    border-color: unset;
-  }
-}
-
-/**
- * Active Tab Indicator
- * Applies bottom border to indicate active tab state
- */
-@mixin tab-active {
-  border-width: 2px 0;
-  border-color: transparent transparent theme.$border-interactive;
-  font-weight: bold;
-}
-
-/**
- * Badge/Tag Styling
- * For count indicators and tags
- * @param {boolean} $active - Whether the badge is on an active element
- */
-@mixin badge($active: false) {
-  box-shadow: none;
-
-  @if $active {
-    background-color: theme.$border-interactive;
-    color: theme.$text-on-color;
-  } @else {
-    background-color: theme.$border-subtle;
-    color: theme.$text-secondary;
-  }
-}
-
-@mixin list {
-  ul {
-    list-style-type: "—";
-    padding: 0;
-  }
-
-  li {
-    max-inline-size: defaults.$max-inline-size;
-    color: theme.$text-secondary;
-  }
-
-  ul li {
-    margin-inline-start: spacing.$spacing-05;
-    padding-inline-start: spacing.$spacing-03;
-  }
-
-  ul li p,
-  ol li p {
-    margin-block: 0;
-  }
-
-  ol {
-    list-style-type: decimal;
-    padding: 0;
-  }
-
-  ol li {
-    margin-inline-start: spacing.$spacing-05;
-  }
-
-  ol ol {
-    list-style-type: lower-alpha;
-  }
-
-  ol ol ol {
-    list-style-type: lower-roman;
-  }
-}
-
-@mixin heading {
-  @for $i from 1 through 6 {
-    $spacings: (
-      spacing.$spacing-07,
-      spacing.$spacing-06,
+  // Size variants map
+  $size-styles: (
+    'xs': (
       spacing.$spacing-05,
-      spacing.$spacing-04,
-      spacing.$spacing-03,
-      spacing.$spacing-02
-    );
+      0.75rem,
+    ),
+    'sm': (
+      spacing.$spacing-06,
+      0.875rem,
+    ),
+    'md': (
+      spacing.$spacing-07,
+      1rem,
+    ),
+    'lg': (
+      spacing.$spacing-08,
+      1.125rem,
+    ),
+    'xl': (
+      spacing.$spacing-09,
+      1.25rem,
+    ),
+    '2xl': (
+      spacing.$spacing-10,
+      1.5rem,
+    ),
+  );
 
-    h#{$i} {
-      @include type.type-style("heading-0#{7 - $i}");
-      margin-block-start: list.nth($spacings, $i);
-      margin-block-end: spacing.$spacing-03;
-      color: theme.$text-primary;
-    }
-  }
-  h2 {
-    border-bottom: none;
-  }
-}
-
-@mixin paragraph {
-  p {
-    color: theme.$text-secondary;
-  }
-}
-
-@mixin blockquote {
-  blockquote {
-    border-left: 4px solid theme.$border-interactive;
-    padding-left: spacing.$spacing-05;
-    margin-left: 0;
-    margin-right: 0;
-  }
-}
-
-@mixin horizontal-rule {
-  hr {
-    border-top: 1px solid theme.$border-subtle;
-    margin: spacing.$spacing-03 0;
-  }
-}
-
-/**
- * ArgTable Base
- * Base styling for controls/props tables
- * Used in both docs.scss and panel.scss
- */
-@mixin argstable-base {
-  * {
-    border-radius: 0;
-  }
-
-  input {
-    inline-size: 100%;
-  }
-
-  > thead.docblock-argstable-head > tr > th > span {
-    color: theme.$text-primary;
-  }
-}
-
-/**
- * ArgTable Body Row
- * Standard control rows in argstable
- */
-@mixin argstable-row {
-  background: theme.$background;
-  border-color: theme.$border-subtle;
-  color: theme.$text-secondary;
-}
-
-/**
- * ArgTable Type Badge
- * Type information badges (string, number, etc.)
- */
-@mixin argstable-type-badge {
-  border-radius: 0;
-  color: theme.$text-secondary;
-
-  .css-mkjjps,
-  .css-o1d7ko,
-  .css-3qmh2b,
-  .css-6q7sni {
-    // todo check for alternatives
-    background-color: theme.$layer;
-    border: 1px solid theme.$border-subtle;
-  }
-}
-
-/**
- * ArgTable Required Indicator
- * Shows which props are required
- */
-@mixin argstable-required {
-  color: theme.$support-error;
-}
-
-/**
- * ArgTable Item Row
- * Expandable rows for arrays/objects
- */
-@mixin argstable-item-row {
-  background: theme.$layer-01 !important;
-  box-shadow: inset 0px 1px 0px 1px theme.$border-subtle;
-
-  &:has(button:focus) {
-    box-shadow: inset 0 0 0 2px theme.$focus !important;
-    background: theme.$layer-01 !important;
-  }
-
-  > td {
-    background-color: transparent !important;
-    border: none;
-    color: theme.$text-primary;
-
-    > span > svg {
-      color: theme.$icon-primary;
-    }
-
-    > button:focus {
-      outline: none;
-    }
-  }
-}
-
-/**
- * Link Styling
- * Provides consistent anchor tag styling with Carbon theme tokens
- * Includes hover, active, visited, and focus states
- */
-@mixin link {
-  a {
-    color: theme.$link-primary;
-    text-decoration: none;
+  // Apply kind styles
+  @if map.has-key($kind-styles, $kind) {
+    $styles: map.get($kind-styles, $kind);
+    color: map.get($styles, 'color');
+    background-color: map.get($styles, 'background');
 
     &:hover {
-      color: theme.$link-primary-hover;
-      text-decoration: underline;
+      background-color: map.get($styles, 'hover');
     }
 
     &:active {
-      color: theme.$link-primary;
-    }
-
-    &:visited {
-      color: theme.$link-visited;
+      background-color: map.get($styles, 'active');
     }
 
     &:focus {
-      outline: 2px solid theme.$focus;
-      outline-offset: 2px;
+      outline: 2px solid map.get($styles, 'focus');
+      outline-offset: -2px;
+    }
+
+    &[aria-checked='true'] {
+      background-color: theme.$background-selected;
     }
   }
-}
 
-@mixin code {
-  code {
-    color: theme.$text-primary;
-    background-color: theme.$layer-01;
-    border: 1px solid theme.$border-subtle;
-    border-radius: 0;
-  }
-}
-
-/**
- * Details and Summary Styling
- * Provides consistent styling for collapsible details/summary elements
- * Includes interactive states and proper spacing
- */
-@mixin details {
-  details {
-    border-radius: 0;
-    padding: spacing.$spacing-08;
-    padding-block-end: 0;
-
-    &:not(:last-of-type) {
-      border-bottom: 1px solid theme.$border-subtle;
-    }
-
-    > summary {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-      font-weight: normal;
-      color: theme.$text-primary;
-      list-style: none;
-      user-select: none;
-
-      padding: spacing.$spacing-03;
-      margin: calc(-1 * spacing.$spacing-08);
-      margin-block-end: spacing.$spacing-03;
-
-      &::-webkit-details-marker {
-        display: none;
-      }
-
-      &::before {
-        content: "⌃";
-        display: inline-flex;
-        justify-content: center;
-        align-items: end;
-        inline-size: spacing.$spacing-06;
-        block-size: spacing.$spacing-06;
-        margin-inline-end: spacing.$spacing-03;
-        font-size: 14px;
-        color: theme.$icon-primary;
-        transition: transform defaults.$transition-duration
-          defaults.$transition-timing-function;
-      }
-
-      &:hover {
-        background-color: theme.$background-hover;
-      }
-
-      &:active {
-        background-color: theme.$background-active;
-      }
-
-      &:focus {
-        outline: 2px solid theme.$focus;
-        outline-offset: -2px;
-      }
-    }
-
-    &:not([open]) > summary {
-      margin-block-end: 0;
-    }
-
-    &[open] {
-      padding-block-end: spacing.$spacing-05;
-
-      > summary::before {
-        transform: rotate(180deg);
-      }
-    }
-
-    > *:not(summary) {
-      margin-block-start: spacing.$spacing-03;
-    }
+  // Apply size styles
+  @if map.has-key($size-styles, $size) {
+    $size-values: map.get($size-styles, $size);
+    min-block-size: list.nth($size-values, 1);
+    min-inline-size: list.nth($size-values, 1);
   }
 }

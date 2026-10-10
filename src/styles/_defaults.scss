@@ -1,11 +1,2 @@
 @use '@carbon/styles/scss/motion';
 @use '@carbon/styles/scss/spacing';
-
-$margin-block: spacing.$spacing-06;
-
-$max-inline-size: 60ch;
-
-$block-size: 3rem;
-
-$transition-duration: motion.$duration-fast-01;
-$transition-timing-function: motion.motion('standard', 'productive');

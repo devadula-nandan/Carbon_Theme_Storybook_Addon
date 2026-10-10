@@ -1,123 +1,24 @@
-@use "@carbon/layout";
-@use "@carbon/styles/scss/theme";
-@use "@carbon/styles/scss/components/button/tokens" as button-tokens;
-@use "mixins";
+@use '@carbon/layout';
+@use '@carbon/styles/scss/theme';
+@use '@carbon/styles/scss/components/button/tokens' as button-tokens;
+@use 'mixins';
 
-/**
- * TOOLBAR STYLES
- * Styles for the Storybook toolbar component (.sb-bar)
- * Includes buttons, tabs, and viewport controls
- */
-
-.sb-bar {
-  background-color: theme.$layer-01 !important;
-  border-bottom: 1px solid theme.$border-subtle-01;
-  box-shadow: none !important;
-
-  /**
-   * Container Adjustments
-   * Removes default margins and width constraints
-   */
-  div {
-    margin: 0 !important;
-    width: unset;
-
-    /**
-     * Viewport Width/Height Labels
-     * Text color for responsive viewport controls
-     */
-    [title="Viewport width"],
-    [title="Viewport height"] {
-      color: theme.$text-secondary;
+[data-carbonize] {
+  .sb-bar[data-testid='sb-preview-toolbar'][aria-labelledby='sb-preview-toolbar-title'] {
+    background-color: theme.$layer;
+    box-shadow: theme.$border-subtle 0 -1px 0 0 inset;
+    button {
+      @include mixins.button;
     }
-  }
-
-  /**
-   * Button & Link Containers
-   * Groups of interactive toolbar elements
-   */
-  :has(> button),
-  :has(> a) {
-    gap: 0;
-
-    /**
-     * Button Separators
-     * Visual dividers between toolbar buttons
-     */
-    button + span:not(.addon-collapsible-icon):has(+ button) {
-      background-color: theme.$border-subtle-01;
+    // divider
+    button + span:has(+ button) {
       margin: 0;
+      background-color: theme.$border-subtle;
       block-size: 100%;
     }
-
-    /**
-     * Standard Toolbar Buttons & Links
-     * Excludes tab buttons which have separate styling
-     */
-    button:not([role="tab"]),
-    a {
-      @include mixins.button("lg");
-    }
-  }
-
-  /**
-   * Selected/Active Non-Tab Button
-   * Indicates active state for toggle buttons
-   * Using data attribute for better semantic meaning
-   */
-  button[data-selected="true"]:not([role="tab"]),
-  button[aria-pressed="true"]:not([role="tab"]) {
-    background-color: theme.$background-selected;
-  }
-
-  /**
-   * Active Tab Indicator (fallback for CSS class)
-   * Using attribute selector for maintainability
-   */
-  [class*="css-"][class*="active"] {
-    @include mixins.tab-active;
-  }
-
-  /**
-   * Tab Buttons
-   * Navigation tabs in the toolbar (e.g., Addons, Controls)
-   */
-  button[role="tab"] {
-    @include mixins.tab-button;
-
-    /**
-     * Badge/Counter on Tabs
-     * Shows notification count or status
-     */
-    > div > div {
-      @include mixins.badge;
-    }
-
-    /**
-     * Collapsible Tab Indicator
-     * Dropdown arrow for expandable tabs
-     */
-    .addon-collapsible-icon {
-      color: theme.$text-primary;
-      border-right: 4px solid transparent;
-      border-left: 4px solid transparent;
-      border-top: 6px solid;
-    }
-  }
-
-  /**
-   * Active Tab State
-   * Visual indicator for currently selected tab
-   */
-  button.tabbutton-active {
-    @include mixins.tab-active;
-
-    /**
-     * Active Tab Badge
-     * Badge styling for active tab state
-     */
-    > div > div {
-      @include mixins.badge(true);
+    div {
+      gap: 0;
+      margin: 0;
     }
   }
 }
