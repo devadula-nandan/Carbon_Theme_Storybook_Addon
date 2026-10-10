@@ -1,6 +1,15 @@
 # Storybook Addon Carbon Theme 9.1.10
 themes storybook with 4 base carbon themes, adds data-carbon-theme to provided nodes
 
+## Storybook version support
+
+Each Storybook major is supported from its own branch. This is the Storybook 9 branch.
+
+| Storybook | Branch                                                                              |
+| --------- | ----------------------------------------------------------------------------------- |
+| 10.x      | [`main`](https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon/tree/main) |
+| 9.x       | [`v9`](https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon/tree/v9)     |
+
 ### Development scripts
 
 - `npm run start` runs babel in watch mode and starts Storybook

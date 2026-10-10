@@ -1,6 +1,6 @@
 {
   "name": "storybook-carbon-theme",
-  "homepage": "https://devadula-nandan.github.io/storybook-theme-carbon/",
+  "homepage": "https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon/tree/v9",
   "version": "0.0.0",
   "description": "themes storybook with 4 base carbon themes, adds data-carbon-theme to provided nodes",
   "keywords": [
@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/devadula-nandan/storybook-theme-carbon"
+    "url": "https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon"
   },
   "type": "module",
   "license": "MIT",
