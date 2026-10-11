@@ -122,7 +122,7 @@ The addon code is in [`src`](./src):
 
 Releases are cut from `main` with the **Release** workflow, under the repository's Actions tab. Choose `patch`, `minor` or `major` and run it. The workflow bumps the version, publishes that version to npm, pushes the version commit and its tag, and creates a GitHub release.
 
-It publishes with the npm access token stored in the `NPM_TOKEN` repository secret.
+It publishes through npm's [trusted publishing](https://docs.npmjs.com/trusted-publishers), so there is no access token to store. The package's settings on npmjs.com name this repository and `release.yml` as a trusted publisher.
 
 ## License
 

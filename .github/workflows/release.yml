@@ -25,7 +25,7 @@ concurrency:
 permissions:
   # push the version commit and tag, and create the GitHub release
   contents: write
-  # lets npm attach provenance to the published package
+  # lets this workflow prove to npm who it is, in place of an access token
   id-token: write
 
 jobs:
@@ -42,11 +42,11 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js 22.x
+      # npm's trusted publishing needs npm 11.5.1 or later, which ships with Node 24.
+      - name: Use Node.js 24.x
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
-          cache: 'pnpm'
+          node-version: 24.x
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
@@ -68,10 +68,12 @@ jobs:
 
       # Publishing comes before pushing: if it fails, the version commit and
       # tag only ever existed in this run and there is nothing to clean up.
+      #
+      # There is no token here. npm is set up to trust this workflow (a
+      # "trusted publisher" in the package's settings on npmjs.com), and it
+      # attaches provenance by itself.
       - name: Publish to npm
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
 
       - name: Push the version commit and tag
         run: git push --atomic origin "HEAD:${{ github.ref_name }}" "v${{ steps.version.outputs.version }}"
