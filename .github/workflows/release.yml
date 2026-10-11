@@ -23,7 +23,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  # start the Pages deploy once the release is out
+  # start the Pages deploy and the GitHub Packages mirror once the release is out
   actions: write
   # push the version commit and tag, and create the GitHub release
   contents: write
@@ -86,8 +86,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       # The push above was made with this workflow's token, which does not
-      # trigger other workflows, so ask for the Pages deploy explicitly.
+      # trigger other workflows, so the two follow-ups are started explicitly.
       - name: Refresh the live demo
         run: gh workflow run deploy-storybook.yml --ref "${{ github.ref_name }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Mirror the release to GitHub Packages
+        run: gh workflow run github-packages.yml --ref "${{ github.ref_name }}" -f tag="v${{ steps.version.outputs.version }}"
         env:
           GH_TOKEN: ${{ github.token }}

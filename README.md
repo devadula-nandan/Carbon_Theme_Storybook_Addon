@@ -124,6 +124,8 @@ Releases are cut from `main` with the **Release** workflow, under the repository
 
 It publishes through npm's [trusted publishing](https://docs.npmjs.com/trusted-publishers), so there is no access token to store. The package's settings on npmjs.com name this repository and `release.yml` as a trusted publisher.
 
+Each release is also mirrored to GitHub Packages as `@devadula-nandan/storybook-carbon-theme`, which is what the repository's Packages section lists. Install from npm: the copy on GitHub needs a token to install.
+
 ## License
 
 [MIT](./LICENSE)

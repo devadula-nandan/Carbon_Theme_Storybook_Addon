@@ -1,0 +1,55 @@
+name: Publish to GitHub Packages
+
+# Mirrors a release to GitHub's own npm registry, which is what the "Packages"
+# section of the repository page lists. npmjs.com stays the place to install
+# from: the copy here has to carry a scoped name and needs a token to install.
+#
+# Started by the Release workflow for each new version. It can also be run by
+# hand for a tag that is already released.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish, for example v0.0.1
+        required: true
+        type: string
+
+run-name: Publish ${{ inputs.tag }} to GitHub Packages
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'pnpm'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build addon
+        run: pnpm build
+
+      # GitHub Packages only accepts names scoped to the account that owns the
+      # repository, so the package is renamed for this publish only.
+      - name: Publish
+        run: |
+          npm pkg set name="@${{ github.repository_owner }}/$(node -p "require('./package.json').name")"
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
