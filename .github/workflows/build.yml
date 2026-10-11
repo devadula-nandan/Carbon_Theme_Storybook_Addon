@@ -1,27 +1,26 @@
 name: Build
 
-on: [push]
+# Checks every branch except main. Pushes to main are checked by the deploy
+# workflow, which lints and builds before it publishes the demo.
+on:
+  push:
+    branches-ignore:
+      - main
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
-    strategy:
-      matrix:
-        node-version: [20.19, 22.12]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22.x
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -29,30 +28,6 @@ jobs:
 
       - name: Check for linter errors
         run: pnpm lint
-
-  build:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
-    strategy:
-      matrix:
-        node-version: [20.19, 22.12]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
 
       - name: Build addon
         run: pnpm build
