@@ -23,6 +23,8 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
+  # start the Pages deploy once the release is out
+  actions: write
   # push the version commit and tag, and create the GitHub release
   contents: write
   # lets this workflow prove to npm who it is, in place of an access token
@@ -80,5 +82,12 @@ jobs:
 
       - name: Create the GitHub release
         run: gh release create "v${{ steps.version.outputs.version }}" --verify-tag --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # The push above was made with this workflow's token, which does not
+      # trigger other workflows, so ask for the Pages deploy explicitly.
+      - name: Refresh the live demo
+        run: gh workflow run deploy-storybook.yml --ref "${{ github.ref_name }}"
         env:
           GH_TOKEN: ${{ github.token }}
