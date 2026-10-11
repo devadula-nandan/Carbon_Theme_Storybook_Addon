@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/devadula-nandan/carbon-theme-storybook-addon"
+    "url": "git+https://github.com/devadula-nandan/carbon-theme-storybook-addon.git"
   },
   "license": "MIT",
   "author": "nandan <devadula.nandan@gmail.com>",
