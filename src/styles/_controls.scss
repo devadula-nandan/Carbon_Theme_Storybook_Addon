@@ -1,0 +1,214 @@
+// The args table and its controls. Storybook renders the same table in the
+// Controls addon panel and on docs pages, so both stylesheets include this.
+//
+// Layering (see `_carbon.scss`): the table is a layer 01 surface, like a
+// Carbon data table. In the addon panel that is the panel's own surface; on a
+// docs page it lifts the table off the page. Either way its rows are layer 01
+// and its fields are $field-02.
+
+@use '@carbon/element-styles/scss/elements/checkbox';
+@use '@carbon/element-styles/scss/elements/radio-button';
+@use '@carbon/styles/scss/components/button/tokens' as button-tokens;
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/theme';
+@use '@carbon/styles/scss/type';
+@use 'carbon';
+
+/// @param {Selector} $scope - an id-based ancestor, so the rules outrank Storybook's own
+@mixin styles($scope) {
+  $table: '#{$scope} .docblock-argstable';
+
+  #{$table} {
+    @include carbon.layer(1);
+    @include type.type-style('body-compact-01');
+    color: theme.$text-primary;
+
+    // Carbon data table: an accented header, then rows split by subtle dividers.
+    .docblock-argstable-head th {
+      @include type.type-style('heading-compact-01');
+      background-color: carbon.on-surface('accent', 1);
+      color: theme.$text-primary;
+
+      span {
+        font: inherit;
+        color: inherit;
+      }
+    }
+
+    .docblock-argstable-body {
+      border-radius: 0;
+      box-shadow: none;
+      filter: none;
+
+      > tr > td {
+        border-radius: 0;
+        border-inline: 0;
+        border-block-start: 0;
+        border-block-end: 0.0625rem solid theme.$border-subtle;
+        // The rows are the surface itself.
+        background-color: transparent;
+      }
+
+      // Rows that group args into a category or subcategory. They stay on the
+      // table's surface and are set apart by their type alone: in Gray 10 a
+      // layer 02 band is the colour of the page and would read as a gap.
+      > tr[title] > td {
+        @include type.type-style('label-01');
+        color: theme.$text-secondary;
+        text-transform: none;
+
+        span {
+          font: inherit;
+          letter-spacing: inherit;
+          color: inherit;
+          text-transform: inherit;
+        }
+      }
+
+      // The arg name.
+      > tr:not([title]) > td:first-child > span {
+        font-weight: 600;
+      }
+    }
+
+    // Text-like fields.
+    :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']), textarea, select) {
+      @include carbon.field;
+    }
+
+    select {
+      cursor: pointer;
+
+      &:hover:not(:disabled) {
+        background-color: theme.$field-hover;
+      }
+    }
+
+    // File control: the browser's button, drawn as a small Carbon button.
+    input[type='file']::file-selector-button {
+      margin-inline-end: spacing.$spacing-05;
+      padding: spacing.$spacing-02 spacing.$spacing-05;
+      border: 0;
+      border-radius: 0;
+      background-color: button-tokens.$button-secondary;
+      color: theme.$text-on-color;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    input[type='file']::file-selector-button:hover {
+      background-color: button-tokens.$button-secondary-hover;
+    }
+
+    // Boolean control: Storybook's two-label switch, drawn as a Carbon content switcher.
+    label:has(> input[role='switch']) {
+      padding: 0;
+      border-radius: 0.25rem;
+      background-color: transparent;
+      box-shadow: inset 0 0 0 0.0625rem theme.$border-inverse;
+
+      > span {
+        @include type.type-style('body-compact-01');
+        padding: spacing.$spacing-02 spacing.$spacing-05;
+        border-radius: 0.25rem;
+        box-shadow: none;
+        background-color: transparent;
+        color: theme.$text-secondary;
+      }
+
+      > input:checked ~ span:last-of-type,
+      > input:not(:checked) ~ span:first-of-type {
+        background-color: theme.$layer-selected-inverse;
+        box-shadow: none;
+        color: theme.$text-inverse;
+      }
+
+      &:has(> input:focus-visible) {
+        @include carbon.focus;
+        outline-offset: 0.0625rem;
+      }
+    }
+
+    // Range control: Carbon slider.
+    //
+    // Storybook bakes the filled part of the track into a generated class, so
+    // it can't be recoloured. Instead the track is hidden and the thumb paints
+    // a line to either side of itself through `border-image`, clipped by the input.
+    input[type='range'] {
+      $thumb: 0.875rem;
+      $line: 0.125rem;
+
+      block-size: $thumb;
+      margin-block: 0;
+      overflow: hidden;
+      background: transparent;
+
+      &::-webkit-slider-runnable-track {
+        block-size: $thumb;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+      }
+
+      &::-moz-range-track {
+        block-size: $thumb;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+      }
+
+      @each $thumb-pseudo in ('::-webkit-slider-thumb', '::-moz-range-thumb') {
+        &#{$thumb-pseudo},
+        &#{$thumb-pseudo}:hover,
+        &#{$thumb-pseudo}:active,
+        &:focus#{$thumb-pseudo} {
+          box-sizing: border-box;
+          block-size: $thumb;
+          inline-size: $thumb;
+          margin-block-start: 0;
+          border: 0;
+          border-radius: 50%;
+          box-shadow: none;
+          transform: none;
+          background: theme.$layer-selected-inverse;
+          border-image: linear-gradient(90deg, theme.$border-inverse 50%, theme.$border-subtle 0)
+            0
+            1 /
+            calc(50% - #{$line * 0.5})
+            100vw /
+            0
+            100vw;
+        }
+
+        &:focus-visible#{$thumb-pseudo} {
+          background: theme.$interactive;
+        }
+      }
+    }
+
+    // Buttons inside the table: reset, object editor actions, colour swatch.
+    button {
+      border-radius: 0;
+    }
+  }
+
+  // Checkbox and radio controls come straight from @carbon/element-styles.
+  @include checkbox.styles(
+    (
+      selector: '#{$table} label:has(> input[type="checkbox"]:not([role="switch"]))',
+    )
+  );
+  @include radio-button.styles(
+    (
+      selector: '#{$table} label:has(> input[type="radio"])',
+    )
+  );
+
+  #{$table} label:has(> input:is([type='checkbox'], [type='radio']):not([role='switch'])) {
+    color: theme.$text-primary;
+
+    > input {
+      margin: 0;
+    }
+  }
+}

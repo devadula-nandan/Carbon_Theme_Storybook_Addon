@@ -1,0 +1,163 @@
+// Shared Carbon setup for the manager and preview stylesheets.
+
+// IBM Plex is loaded from Carbon's CDN because these styles are injected at
+// runtime, so there is no build step that could resolve local font files.
+@use '@carbon/styles/scss/config' with (
+  $use-akamai-cdn: true
+);
+@use '@carbon/styles/scss/fonts';
+
+// @carbon/element-styles wraps everything it emits in a cascade layer, and
+// layered styles always lose to Storybook's own unlayered ones. Telling it
+// that a layer is already open makes it emit plain rules instead.
+@use '@carbon/element-styles/scss/utilities/cascade-layer' with (
+  $is-inside-cascade-layer: true
+);
+@use '@carbon/element-styles/index' as element-styles;
+@use '@carbon/styles/scss/layer/layer-tokens';
+@use '@carbon/styles/scss/theme';
+@use '@carbon/styles/scss/type';
+@use '@carbon/styles/scss/utilities/custom-property';
+@use 'sass:map';
+@use 'sass:math';
+
+/// Emits the Carbon tokens for the light (Gray 10) and dark (Gray 100) themes,
+/// keyed off the attribute the addon sets on `<html>`.
+@mixin tokens {
+  :root[data-carbon-theme='g10'] {
+    color-scheme: light;
+    @include element-styles.emit-carbon-tokens('g10');
+  }
+
+  :root[data-carbon-theme='g100'] {
+    color-scheme: dark;
+    @include element-styles.emit-carbon-tokens('g100');
+  }
+}
+
+/// Carbon's focus indicator: a 2px line inside the element.
+@mixin focus {
+  outline: 0.125rem solid theme.$focus;
+  outline-offset: -0.125rem;
+  box-shadow: none;
+}
+
+// ---------------------------------------------------------------------------
+// Layering
+// ---------------------------------------------------------------------------
+//
+// Carbon builds depth by stacking surfaces:
+//
+//   $background   the page: the story canvas, docs pages, settings pages
+//   $layer-01     surfaces on the page: sidebar, toolbar, addon panel, menus,
+//                 tables and code blocks
+//   $layer-02     bands inside a layer 01 surface, e.g. a table's group rows
+//
+// Each surface has tokens that pair with it. A field on the page is
+// $field-01, but on a layer 01 surface it is $field-02; dividers go from
+// $border-subtle-00 to $border-subtle-01, and so on. Carbon's contextual
+// tokens ($layer, $field, $border-subtle, $border-strong...) resolve to the
+// right one for wherever they are used, which is what the `layer` mixin sets
+// up. Rules inside a surface should use those and never a numbered token.
+
+/// Makes an element a Carbon layer, like Carbon's `Layer` component.
+///
+/// The element takes the colour of layer `$level`. Inside it the contextual
+/// tokens resolve one level up, so nested fields, dividers and containers
+/// keep their contrast against it.
+/// @param {Number} $level [1] - 1, 2 or 3
+@mixin layer($level: 1) {
+  @include layer-tokens.emit-layer-tokens(math.min($level + 1, 3));
+  // In the level that was just set, "the background a layer sits on" is this layer.
+  background-color: theme.$layer-background;
+}
+
+/// Puts an element back on the page: $background, with the contextual tokens
+/// at their top level. For page-like areas that sit inside a layer.
+@mixin page {
+  @include layer-tokens.emit-layer-tokens(1);
+  background-color: theme.$background;
+}
+
+$-page-states: (
+  'hover': theme.$background-hover,
+  'active': theme.$background-active,
+  'selected': theme.$background-selected,
+  'selected-hover': theme.$background-selected-hover,
+);
+
+/// A state colour for something that sits directly on a surface and has no
+/// background of its own, such as a ghost button, a tab or a row.
+///
+/// Contextual tokens can't express this: inside a layer they describe the
+/// next layer up, not the surface itself.
+/// @param {'hover' | 'active' | 'selected' | 'selected-hover' | 'accent' | 'accent-hover'} $state
+/// @param {Number} $level - 0 for the page, 1 to 3 for a layer
+@function on-surface($state, $level) {
+  @if $level == 0 {
+    @if not map.has-key($-page-states, $state) {
+      @error 'The page background has no "#{$state}" state.';
+    }
+    @return map.get($-page-states, $state);
+  }
+  @return custom-property.get-var('layer-#{$state}-0#{$level}');
+}
+
+/// Carbon ghost button states on top of whatever layout the button already has.
+/// @param {Number} $level [0] - the surface the button sits on, see `on-surface`
+@mixin ghost-button($level: 0) {
+  border-radius: 0;
+  box-shadow: none;
+  color: theme.$icon-secondary;
+  background-color: transparent;
+
+  &:hover:not(:disabled, [aria-disabled='true']) {
+    color: theme.$icon-primary;
+    background-color: on-surface('hover', $level);
+  }
+
+  &:active:not(:disabled, [aria-disabled='true']) {
+    background-color: on-surface('active', $level);
+  }
+
+  &:is([aria-checked='true'], [aria-pressed='true'], [aria-expanded='true']) {
+    color: theme.$icon-primary;
+    background-color: on-surface('selected', $level);
+  }
+
+  &:is(:disabled, [aria-disabled='true']) {
+    color: theme.$icon-disabled;
+  }
+
+  &:focus-visible {
+    @include focus;
+  }
+}
+
+/// Carbon text field: field colour, a single bottom border and no rounding.
+/// The colours are contextual, so the field always contrasts with its surface.
+@mixin field {
+  border: 0;
+  border-block-end: 0.0625rem solid theme.$border-strong;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: theme.$field;
+  color: theme.$text-primary;
+  font-family: type.font-family('sans');
+  @include type.type-style('body-compact-01');
+
+  &::placeholder {
+    color: theme.$text-placeholder;
+  }
+
+  &:focus,
+  &:focus-visible {
+    @include focus;
+  }
+
+  &:disabled {
+    color: theme.$text-disabled;
+    border-block-end-color: transparent;
+    cursor: not-allowed;
+  }
+}

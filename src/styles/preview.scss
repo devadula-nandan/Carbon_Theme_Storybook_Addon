@@ -1,8 +1,274 @@
-/**
- * PREVIEW STYLES ENTRY POINT
- * Main stylesheet for Storybook preview (story canvas)
- * Imports theme base for preview iframe
- */
+// Styles for the preview iframe: Carbon tokens for stories, plus docs pages.
+//
+// Nothing here may reach into a story. Docs rules only match elements that are
+// not inside `.sb-unstyled`, which is how Storybook marks stories and other
+// content that has to keep its own styling.
+//
+// Layering (see `_carbon.scss`): a story and a docs page are the page, on
+// $background. Tables, code blocks and a preview's toolbar are layer 01
+// surfaces on top of it.
 
-@use 'theme-base';
-@use 'docs';
+// Has to be loaded first: it configures the Carbon Sass modules the others share.
+@use 'carbon';
+@use '@carbon/element-styles/scss/elements/anchor';
+@use '@carbon/element-styles/scss/elements/block-quotation';
+@use '@carbon/element-styles/scss/elements/code';
+@use '@carbon/element-styles/scss/elements/details';
+@use '@carbon/element-styles/scss/elements/heading-level-1';
+@use '@carbon/element-styles/scss/elements/heading-level-2';
+@use '@carbon/element-styles/scss/elements/heading-level-3';
+@use '@carbon/element-styles/scss/elements/heading-level-4';
+@use '@carbon/element-styles/scss/elements/heading-level-5';
+@use '@carbon/element-styles/scss/elements/heading-level-6';
+@use '@carbon/element-styles/scss/elements/horizontal-rule';
+@use '@carbon/element-styles/scss/elements/ordered-list';
+@use '@carbon/element-styles/scss/elements/paragraph';
+@use '@carbon/element-styles/scss/elements/table';
+@use '@carbon/element-styles/scss/elements/unordered-list';
+@use '@carbon/element-styles/scss/layout';
+@use '@carbon/styles/scss/theme';
+@use '@carbon/styles/scss/type';
+@use 'controls';
+@use 'syntax';
+
+@include carbon.tokens;
+@include syntax.tokens;
+
+// ---------------------------------------------------------------------------
+// Stories
+// ---------------------------------------------------------------------------
+
+// Give stories the theme's page background and text colour. Everything else
+// about a story is left alone.
+:root[data-carbon-theme] body {
+  background-color: theme.$background;
+  color: theme.$text-primary;
+}
+
+// ---------------------------------------------------------------------------
+// Docs pages
+// ---------------------------------------------------------------------------
+
+$docs: '#storybook-docs .sbdocs-content';
+
+/// Selects an element written by a docs author, never one inside a story.
+@function prose($element) {
+  @return '#{$docs} #{$element}:not(.sb-unstyled, .sb-unstyled *)';
+}
+
+#{$docs} {
+  // Carbon's expressive type scale, which is the one meant for documentation.
+  @include layout.mode('expressive');
+}
+
+// Clear the parts of Storybook's own prose styling that the Carbon element
+// styles below don't set themselves. This comes first so they can override it.
+#{prose(':is(h1, h2, h3, h4, h5, h6)')} {
+  padding: 0;
+  border: 0;
+  color: theme.$text-primary;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+#{prose('code')} {
+  margin: 0;
+  border: 0;
+  color: theme.$text-primary;
+}
+
+#{prose('table')} {
+  border: 0;
+
+  :is(tr, th, td) {
+    border: 0;
+  }
+}
+
+#{prose('blockquote')} {
+  padding: 0;
+  border: 0;
+  color: theme.$text-primary;
+}
+
+// The page title and subtitle blocks.
+@include heading-level-1.styles(
+  (
+    selector: '#{$docs} .sbdocs-title',
+  )
+);
+@include heading-level-4.styles(
+  (
+    selector: '#{$docs} .sbdocs-subtitle',
+  )
+);
+
+#{$docs} .sbdocs-title {
+  margin-block-start: 0;
+  color: theme.$text-primary;
+}
+
+#{$docs} .sbdocs-subtitle {
+  margin-block-start: 0;
+  color: theme.$text-secondary;
+
+  p {
+    margin: 0;
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+  }
+}
+
+@include heading-level-1.styles(
+  (
+    selector: prose('h1'),
+  )
+);
+@include heading-level-2.styles(
+  (
+    selector: prose('h2'),
+  )
+);
+@include heading-level-3.styles(
+  (
+    selector: prose('h3'),
+  )
+);
+@include heading-level-4.styles(
+  (
+    selector: prose('h4'),
+  )
+);
+@include heading-level-5.styles(
+  (
+    selector: prose('h5'),
+  )
+);
+@include heading-level-6.styles(
+  (
+    selector: prose('h6'),
+  )
+);
+@include paragraph.styles(
+  (
+    selector: prose('p'),
+  )
+);
+@include unordered-list.styles(
+  (
+    selector: prose('ul'),
+  )
+);
+@include ordered-list.styles(
+  (
+    selector: prose('ol'),
+  )
+);
+@include anchor.styles(
+  (
+    selector: prose('a'),
+  )
+);
+@include code.styles(
+  (
+    selector: prose('code'),
+  )
+);
+@include block-quotation.styles(
+  (
+    selector: prose('blockquote'),
+  )
+);
+@include horizontal-rule.styles(
+  (
+    selector: prose('hr'),
+  )
+);
+@include details.styles(
+  (
+    selector: prose('details'),
+  )
+);
+@include table.styles(
+  (
+    selector: prose('table'),
+  )
+);
+
+#storybook-docs {
+  // Story previews: a bordered frame around a piece of the page.
+  .sbdocs-preview {
+    border: 0.0625rem solid theme.$border-subtle;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: theme.$background;
+
+    // The preview's toolbar is a layer 01 bar, like the main toolbar.
+    > [role='toolbar'] {
+      @include carbon.layer(1);
+      border-block-end: 0;
+      box-shadow: inset 0 -0.0625rem 0 theme.$border-subtle;
+
+      :is(button, a) {
+        @include carbon.ghost-button(1);
+        border: 0;
+      }
+    }
+  }
+
+  // A preview's "Show code" panel: a layer 01 surface under the story.
+  // Storybook gives it no class, but it is whatever follows the story.
+  .sbdocs-preview > .docs-story ~ div > div {
+    @include carbon.layer(1);
+    border-block-start: 0.0625rem solid theme.$border-subtle;
+  }
+
+  // Code blocks: a layer 01 surface.
+  .docblock-source {
+    @include carbon.layer(1);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+    // The corner that holds the copy button is accented, like a table header.
+    > div:has(> button) {
+      border: 0;
+      border-radius: 0;
+      background-color: carbon.on-surface('accent', 1);
+    }
+
+    > div > button {
+      @include carbon.ghost-button(1);
+      border: 0;
+
+      &:hover:not(:disabled) {
+        background-color: carbon.on-surface('accent-hover', 1);
+      }
+    }
+  }
+
+  // "Show code" and "Copy code" sit straight on the page.
+  .sbdocs-preview-actions :is(button, a) {
+    @include carbon.ghost-button(0);
+    border: 0;
+  }
+
+  .sbdocs-preview-actions :is(button, a),
+  .docblock-source > div > button {
+    @include type.type-style('body-compact-01');
+    color: theme.$link-primary;
+
+    &:hover:not(:disabled) {
+      color: theme.$link-primary-hover;
+    }
+  }
+}
+
+// Controls keep the compact, productive type scale even on a docs page.
+#storybook-docs .docblock-argstable {
+  @include layout.mode('productive');
+}
+
+@include controls.styles('#storybook-docs');
+@include syntax.styles('#storybook-docs :is(.docblock-source, .sbdocs-preview > .docs-story ~ div)');

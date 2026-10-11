@@ -1,0 +1,100 @@
+// Syntax highlighting for code blocks.
+//
+// Storybook renders some code blocks with its stock light or dark theme no
+// matter which theme is active (the `Source` block is always light, a story's
+// "Show code" is always dark). Colouring the tokens here keeps every code
+// block on the Carbon theme. The palette comes from Carbon's colour scales,
+// picked to stay readable on a layer in each theme.
+
+@use '@carbon/styles/scss/colors';
+@use '@carbon/styles/scss/theme';
+
+$-palettes: (
+  'g10': (
+    'keyword': colors.$purple-60,
+    'tag': colors.$blue-60,
+    'function': colors.$blue-70,
+    'string': colors.$green-60,
+    'number': colors.$magenta-60,
+    'property': colors.$teal-70,
+    'deleted': colors.$red-60,
+  ),
+  'g100': (
+    'keyword': colors.$purple-40,
+    'tag': colors.$blue-40,
+    'function': colors.$cyan-40,
+    'string': colors.$green-40,
+    'number': colors.$magenta-40,
+    'property': colors.$teal-30,
+    'deleted': colors.$red-40,
+  ),
+);
+
+@function -color($name) {
+  @return var(--sb-carbon-syntax-#{$name});
+}
+
+/// Emits the syntax palette for both themes.
+@mixin tokens {
+  @each $theme, $palette in $-palettes {
+    :root[data-carbon-theme='#{$theme}'] {
+      @each $name, $value in $palette {
+        --sb-carbon-syntax-#{$name}: #{$value};
+      }
+    }
+  }
+}
+
+/// Colours Prism tokens inside the given code block selector.
+/// @param {Selector} $block - an id-based selector, so the rules outrank Storybook's own
+@mixin styles($block) {
+  #{$block} {
+    color: theme.$text-primary;
+
+    .token {
+      color: inherit;
+    }
+
+    .token:is(.comment, .prolog, .doctype, .cdata) {
+      color: theme.$text-helper;
+      font-style: italic;
+    }
+
+    .token:is(.punctuation, .operator, .entity) {
+      color: theme.$text-secondary;
+    }
+
+    .token:is(.keyword, .atrule, .important, .selector) {
+      color: -color('keyword');
+    }
+
+    .token:is(.tag, .namespace, .builtin) {
+      color: -color('tag');
+    }
+
+    .token:is(.function, .class-name, .title) {
+      color: -color('function');
+    }
+
+    .token:is(.string, .char, .attr-value, .inserted, .url, .regex) {
+      color: -color('string');
+    }
+
+    .token:is(.number, .boolean, .constant, .symbol, .variable) {
+      color: -color('number');
+    }
+
+    .token:is(.attr-name, .property) {
+      color: -color('property');
+    }
+
+    .token.deleted {
+      color: -color('deleted');
+    }
+
+    // Punctuation nested in tags and attribute values, e.g. the brackets of `<div>`.
+    .token:is(.tag, .attr-value) .token.punctuation {
+      color: theme.$text-secondary;
+    }
+  }
+}

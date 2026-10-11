@@ -1,9 +1,13 @@
 {
   "name": "storybook-carbon-theme",
   "version": "0.0.0",
-  "description": "themes storybook manager and preview with carbon tokens",
+  "description": "Carbon Design System light and dark themes for the Storybook UI, docs pages and stories",
   "keywords": [
-    "storybook-addon"
+    "storybook-addon",
+    "carbon",
+    "carbon-design-system",
+    "theme",
+    "dark-mode"
   ],
   "repository": {
     "type": "git",
@@ -21,7 +25,6 @@
       "types": "./dist/preview.d.ts",
       "default": "./dist/preview.js"
     },
-    "./preset": "./dist/preset.js",
     "./manager": "./dist/manager.js",
     "./package.json": "./package.json"
   },
@@ -35,30 +38,31 @@
     "prebuild": "node -e \"fs.rmSync('./dist', { recursive: true, force: true })\"",
     "build": "tsup",
     "build-storybook": "storybook build",
-    "build:watch": "npm run build -- --watch",
-    "eject-ts": "zx scripts/eject-typescript.js",
+    "build:watch": "tsup --watch src",
     "format": "prettier --write .",
     "lint": "eslint --cache .",
     "lint:fix": "pnpm lint --fix",
     "prerelease": "zx scripts/prepublish-checks.js",
     "release": "npm run build && auto shipit",
-    "start": "run-p build:watch \"storybook --quiet\"",
+    "start": "pnpm build && run-p build:watch \"storybook --quiet\"",
     "storybook": "storybook dev -p 6006",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "@carbon/colors": "^11.47.0",
-    "@carbon/feature-flags": "^1.0.0",
-    "@carbon/grid": "^11.50.0",
-    "@carbon/layout": "^11.48.0",
-    "@carbon/motion": "^11.41.0",
-    "@carbon/styles": "^1.100.0",
-    "@carbon/themes": "^11.68.0",
-    "@carbon/type": "^11.54.0",
+    "@carbon/colors": "^11.60.0",
+    "@carbon/element-styles": "^0.4.0",
+    "@carbon/feature-flags": "^1.10.0",
+    "@carbon/grid": "^11.64.0",
+    "@carbon/layout": "^11.61.0",
+    "@carbon/motion": "^11.54.0",
+    "@carbon/styles": "^1.117.0",
+    "@carbon/themes": "^11.83.0",
+    "@carbon/type": "^11.69.0",
     "@eslint/js": "^9.36.0",
-    "@storybook/addon-docs": "10.2.10",
+    "@storybook/addon-a11y": "^10.6.1",
+    "@storybook/addon-docs": "^10.6.1",
     "@storybook/icons": "^2.0.0",
-    "@storybook/react-vite": "10.2.10",
+    "@storybook/react-vite": "^10.6.1",
     "@types/node": "^20",
     "@types/react": "^18.2.65",
     "@types/react-dom": "^18.2.21",
@@ -70,14 +74,13 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-storybook": "10.2.10",
+    "eslint-plugin-storybook": "^10.6.1",
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.6.2",
-    "prompts": "^2.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sass": "^1.97.3",
-    "storybook": "10.2.10",
+    "storybook": "^10.6.1",
     "ts-dedent": "^2.2.0",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
@@ -86,7 +89,8 @@
     "zx": "^8.7.1"
   },
   "peerDependencies": {
-    "storybook": "10.2.10"
+    "@storybook/addon-docs": "^10.0.0",
+    "storybook": "^10.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -96,17 +100,15 @@
       "src/manager.tsx"
     ],
     "previewEntries": [
-      "src/preview.ts",
+      "src/preview.tsx",
       "src/index.ts"
-    ],
-    "nodeEntries": [
-      "src/preset.ts"
     ]
   },
   "storybook": {
-    "displayName": "storybook-carbon-theme",
+    "displayName": "Carbon theme",
     "supportedFrameworks": [
-      "web-components", "react"
+      "web-components",
+      "react"
     ],
     "icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
   },

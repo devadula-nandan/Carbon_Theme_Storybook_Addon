@@ -1,22 +1,19 @@
 import { defineConfig, type Options } from 'tsup';
 import { sassPlugin } from 'esbuild-sass-plugin';
 
-const NODE_TARGET = 'node20.19'; // Minimum Node version supported by Storybook 10
-
 export default defineConfig(async () => {
-  // reading the three types of entries from package.json, which has the following structure:
+  // reading the entries from package.json, which has the following structure:
   // {
   //  ...
   //   "bundler": {
-  //     "managerEntries": ["./src/manager.ts"],
-  //     "previewEntries": ["./src/preview.ts", "./src/index.ts"]
-  //     "nodeEntries": ["./src/preset.ts"]
+  //     "managerEntries": ["./src/manager.tsx"],
+  //     "previewEntries": ["./src/preview.tsx", "./src/index.ts"]
   //   }
   // }
   const packageJson = (await import('./package.json', { with: { type: 'json' } })).default;
 
   const {
-    bundler: { managerEntries = [], previewEntries = [], nodeEntries = [] },
+    bundler: { managerEntries = [], previewEntries = [] },
   } = packageJson;
 
   const commonConfig: Options = {
@@ -36,6 +33,9 @@ export default defineConfig(async () => {
     esbuildPlugins: [
       sassPlugin({
         type: 'style',
+        // Carbon's own Sass still triggers deprecation warnings that we can't act on here
+        quietDeps: true,
+        silenceDeprecations: ['if-function'],
       }),
     ],
   };
@@ -68,20 +68,6 @@ export default defineConfig(async () => {
       platform: 'browser',
       target: 'esnext', // we can use esnext for preview entries since the builders will bundle the addon's preview entries again anyway
       dts: true,
-    });
-  }
-
-  /*
-   node entries are entries meant to be used in node-only
-   this is useful for presets, which are loaded by Storybook when setting up configurations
-   they won't have types generated for them as they're usually loaded automatically by Storybook
-  */
-  if (nodeEntries.length) {
-    configs.push({
-      ...commonConfig,
-      entry: nodeEntries,
-      platform: 'node',
-      target: NODE_TARGET,
     });
   }
 

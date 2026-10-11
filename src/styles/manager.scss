@@ -1,10 +1,307 @@
-/**
- * MANAGER STYLES ENTRY POINT
- * Main stylesheet for Storybook manager (UI chrome)
- * Imports theme base, sidebar, and toolbar styles
- */
+// Styles for the Storybook UI itself: sidebar, toolbar and addon panel.
+//
+// Colours, fonts and radii mostly come from the Storybook theme in
+// `storybook-themes.ts`. This file adds the Carbon details a theme can't
+// express. Selectors start from an id so they outrank Storybook's generated
+// class names, and otherwise stick to ids, roles and data attributes that
+// Storybook keeps stable.
+//
+// Layering (see `_carbon.scss`): the canvas is the page, on $background. The
+// sidebar, toolbar, addon panel and menus are layer 01 surfaces around it.
 
-@use 'theme-base';
-@use 'sidenav';
-@use 'toolbar';
-@use 'panel';
+// Has to be loaded first: it configures the Carbon Sass modules the others share.
+@use 'carbon';
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/theme';
+@use '@carbon/styles/scss/type';
+@use 'controls';
+@use 'syntax';
+
+@include carbon.tokens;
+@include syntax.tokens;
+
+#root :focus-visible {
+  @include carbon.focus;
+}
+
+// ---------------------------------------------------------------------------
+// Sidebar: a layer 01 surface
+// ---------------------------------------------------------------------------
+
+#storybook-sidebar-region {
+  @include carbon.layer(1);
+
+  .sidebar-header button,
+  [role='search'] > button {
+    @include carbon.ghost-button(1);
+  }
+
+  // Search: a Carbon field with a single bottom border.
+  .search-field {
+    border-radius: 0;
+    box-shadow: none;
+    border-block-end: 0.0625rem solid theme.$border-strong;
+    background-color: theme.$field;
+
+    &:hover {
+      background-color: theme.$field-hover;
+    }
+
+    &:focus-within {
+      @include carbon.focus;
+    }
+
+    input:focus-visible {
+      outline: none;
+    }
+
+    // The field is a surface of its own, so its buttons take plain ghost states.
+    button {
+      @include carbon.ghost-button(0);
+    }
+  }
+}
+
+#storybook-explorer-tree {
+  // Group headings.
+  .sidebar-subheading button {
+    border-radius: 0;
+    color: theme.$text-secondary;
+
+    &:first-child {
+      @include type.type-style('label-01');
+      text-transform: none;
+    }
+
+    &:hover {
+      color: theme.$text-primary;
+      background-color: carbon.on-surface('hover', 1);
+    }
+  }
+
+  // Tree items, following Carbon's tree view: quiet by default, and the
+  // selected item marked with the layer's selected colour and an accent bar.
+  .sidebar-item {
+    border-radius: 0;
+    color: theme.$text-secondary;
+
+    > a,
+    > button {
+      border-radius: 0;
+      color: inherit;
+    }
+
+    svg[type] {
+      color: theme.$icon-secondary;
+    }
+
+    // The "more actions" button that appears on hover.
+    > [data-testid='context-menu'] {
+      @include carbon.ghost-button(1);
+    }
+
+    &:hover {
+      color: theme.$text-primary;
+      background-color: carbon.on-surface('hover', 1);
+    }
+
+    &:active {
+      background-color: carbon.on-surface('active', 1);
+    }
+
+    &[data-selected='true'] {
+      color: theme.$text-primary;
+      background-color: carbon.on-surface('selected', 1);
+      box-shadow: inset 0.1875rem 0 0 theme.$border-interactive;
+
+      > a,
+      > button {
+        font-weight: 600;
+      }
+
+      svg {
+        color: theme.$icon-primary;
+      }
+
+      &:hover {
+        background-color: carbon.on-surface('selected-hover', 1);
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Bars: the toolbar and the tab bars are layer 01 surfaces
+// ---------------------------------------------------------------------------
+
+#root .sb-bar,
+#main-content-wrapper > div > div:first-child,
+#storybook-panel-root > div:first-child {
+  @include carbon.layer(1);
+  // The divider under a bar is drawn as an inset shadow.
+  box-shadow: inset 0 -0.0625rem 0 theme.$border-subtle;
+}
+
+#root .sb-bar {
+  // Full-height square buttons that sit flush, like a Carbon toolbar.
+  [role='toolbar'] {
+    margin-inline: 0;
+
+    > div {
+      gap: 0;
+    }
+  }
+
+  :is(button, a) {
+    @include carbon.ghost-button(1);
+    block-size: 2.5rem;
+    min-inline-size: 2.5rem;
+    padding-inline: spacing.$spacing-04;
+    justify-content: center;
+    @include type.type-style('body-compact-01');
+  }
+}
+
+// Carbon line tabs.
+#root [role='tablist'] [role='tab'] {
+  @include type.type-style('body-compact-01');
+  border-radius: 0;
+  border-block-end: 0.125rem solid transparent;
+  color: theme.$text-secondary;
+
+  &:hover {
+    color: theme.$text-primary;
+    border-block-end-color: theme.$border-strong;
+  }
+
+  &[aria-selected='true'] {
+    @include type.type-style('heading-compact-01');
+    color: theme.$text-primary;
+    border-block-end-color: theme.$border-interactive;
+  }
+
+  // Count badge, drawn as a Carbon tag on the bar.
+  > div > div {
+    @include type.type-style('label-01');
+    box-shadow: none;
+    background-color: carbon.on-surface('accent', 1);
+    color: theme.$text-primary;
+  }
+}
+
+// Bar actions that are not tabs, e.g. moving or hiding the addon panel.
+#main-content-wrapper > div > div:first-child button:not([role='tab']),
+#storybook-panel-root > div:first-child button:not([role='tab']) {
+  @include carbon.ghost-button(1);
+}
+
+// ---------------------------------------------------------------------------
+// Addon panel: a layer 01 surface
+// ---------------------------------------------------------------------------
+
+#storybook-panel-region {
+  @include carbon.layer(1);
+
+  // Dividers that Storybook draws inside the panel.
+  [role='tabpanel'] {
+    border-color: theme.$border-subtle;
+  }
+}
+
+@include controls.styles('#storybook-panel-root');
+@include syntax.styles('#root .prismjs');
+
+// ---------------------------------------------------------------------------
+// The page: the canvas and the settings pages are back on $background
+// ---------------------------------------------------------------------------
+
+// The area a story is shown in, including what shows around a resized viewport.
+#root main:has(#storybook-preview-wrapper),
+#main-content-wrapper [role='tabpanel'] > div {
+  @include carbon.page;
+}
+
+// Fields on a settings page, e.g. the keyboard shortcuts.
+#main-content-wrapper [role='tabpanel'] input {
+  @include carbon.field;
+}
+
+// ---------------------------------------------------------------------------
+// Overlays
+// ---------------------------------------------------------------------------
+
+// Menus, select lists and tooltips are rendered next to #root, not inside it.
+:root[data-carbon-theme] {
+  // Popover surface: a layer 01 surface floating above everything, with
+  // Carbon's overlay shadow to lift it off whatever is underneath.
+  .react-aria-Popover > div[class],
+  body > div:has(> [role='listbox']) {
+    @include carbon.layer(1);
+    border-radius: 0;
+    filter: none;
+    box-shadow: 0 0.125rem 0.375rem theme.$shadow;
+    color: theme.$text-primary;
+  }
+
+  [role='listbox'] {
+    border-radius: 0;
+  }
+
+  // Dividers between groups of menu items.
+  .react-aria-Popover ul {
+    border-color: theme.$border-subtle;
+  }
+
+  // Menu items and select options.
+  .react-aria-Popover li > :is(a, button),
+  [role='listbox'] > [role='option'] {
+    @include type.type-style('body-compact-01');
+    border-radius: 0;
+    color: theme.$text-secondary;
+
+    :is(div, p) {
+      font: inherit;
+      letter-spacing: inherit;
+      color: inherit;
+    }
+
+    svg {
+      color: theme.$icon-secondary;
+    }
+
+    &:is(:hover, :focus-visible, [data-focused]) {
+      background-color: carbon.on-surface('hover', 1);
+      color: theme.$text-primary;
+
+      svg {
+        color: theme.$icon-primary;
+      }
+    }
+
+    &:active {
+      background-color: carbon.on-surface('active', 1);
+    }
+
+    &:focus-visible {
+      @include carbon.focus;
+    }
+
+    &[aria-selected='true'] {
+      background-color: carbon.on-surface('selected', 1);
+      color: theme.$text-primary;
+    }
+  }
+
+  // Tooltips use Carbon's inverse surface.
+  .react-aria-Tooltip > div[class] {
+    @include type.type-style('body-compact-01');
+    border-radius: 0.125rem;
+    box-shadow: 0 0.125rem 0.375rem theme.$shadow;
+    background-color: theme.$background-inverse;
+    color: theme.$text-inverse;
+  }
+
+  .react-aria-Tooltip .react-aria-OverlayArrow svg {
+    fill: theme.$background-inverse;
+  }
+}
