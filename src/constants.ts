@@ -13,7 +13,7 @@ export const EVENTS = {
 export const THEME_ATTRIBUTE = 'data-carbon-theme';
 
 /** `localStorage` key used to remember the theme preference. */
-export const STORAGE_KEY = 'storybook-carbon-theme';
+export const STORAGE_KEY = ADDON_ID;
 
 /** Carbon theme used for light mode. */
 export const LIGHT = 'g10';

@@ -2,18 +2,14 @@
 
 A Storybook addon that makes Storybook look like [Carbon Design System](https://carbondesignsystem.com): the sidebar, toolbar, addon panels and docs pages, in a light and a dark theme.
 
-This is the **Storybook 10** branch. For Storybook 9, see [`v9`](https://github.com/devadula-nandan/carbon-theme-storybook-addon/tree/v9).
-
 [Live demo](https://devadula-nandan.github.io/carbon-theme-storybook-addon/)
 
 ## Features
 
-- **Light, dark or auto.** Light is Carbon's Gray 10 and dark is Gray 100. Auto follows your system setting, and keeps following it while Storybook is open. A toolbar menu switches between the three.
-- **The whole Storybook UI in Carbon.** Colours, IBM Plex, square corners, Carbon tabs, fields, tables, menus and focus rings.
-- **Docs pages too.** Prose, tables, code blocks and controls follow the theme.
+- **Light, dark or auto.** Light is Carbon's Gray 10 and dark is Gray 100. Auto, the default, follows your system setting and keeps following it while Storybook is open. A toolbar menu switches between the three, and your choice is remembered.
+- **The whole Storybook UI in Carbon.** Colours, IBM Plex, square corners, Carbon tabs, fields, tables, menus and focus rings, on docs pages as well.
 - **Switching is instant.** A switch re-themes the page in place. Stories are not re-rendered, docs pages keep their scroll position, and the sidebar and panels keep the size you dragged them to.
 - **Carbon tokens in the preview.** The active theme's `--cds-*` custom properties are set on the preview's root element, so Carbon components in your stories follow the theme.
-- **Remembers your choice.** The default is auto. Whatever you pick is remembered for next time.
 
 ## Storybook version support
 
@@ -69,7 +65,7 @@ The addon sets one attribute on the `<html>` element of both the Storybook UI an
 
 The attribute always holds the theme that is applied. In auto mode that is whichever of the two the system setting resolves to.
 
-The theme is kept out of Storybook's globals on purpose. Storybook re-renders the story and rebuilds the whole docs page whenever a global changes, so the addon holds the theme itself and tells the preview about a switch over the channel.
+The theme is kept out of Storybook's globals on purpose: Storybook re-renders the story and rebuilds the whole docs page whenever a global changes. The addon holds the theme itself and tells the preview about a switch over the channel.
 
 The Storybook UI and docs pages are themed in two steps: a Storybook theme built from Carbon's tokens, and a stylesheet for the details a theme can't express. Docs prose and form controls use [`@carbon/element-styles`](https://github.com/carbon-design-system/carbon-element-styles).
 
@@ -120,11 +116,11 @@ The addon code is in [`src`](./src):
 
 ### Releasing
 
-Releases are cut from `main` with the **Release** workflow, under the repository's Actions tab. Choose `patch`, `minor` or `major` and run it. The workflow bumps the version, publishes that version to npm, pushes the version commit and its tag, and creates a GitHub release.
+Releases are cut from `main` with the **Release** workflow, under the repository's Actions tab. Choose `patch`, `minor` or `major` and run it. The workflow bumps the version, publishes it to npm, pushes the version commit and its tag, creates a GitHub release and refreshes the live demo.
 
 It publishes through npm's [trusted publishing](https://docs.npmjs.com/trusted-publishers), so there is no access token to store. The package's settings on npmjs.com name this repository and `release.yml` as a trusted publisher.
 
-Each release is also mirrored to GitHub Packages as `@devadula-nandan/storybook-carbon-theme`, which is what the repository's Packages section lists. Install from npm: the copy on GitHub needs a token to install.
+The release also puts a copy on GitHub Packages as `@devadula-nandan/storybook-carbon-theme`, which is what the repository's Packages section lists. Install from npm: the copy on GitHub needs a token to install.
 
 ## License
 

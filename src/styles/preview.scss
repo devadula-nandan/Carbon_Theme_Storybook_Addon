@@ -10,6 +10,7 @@
 
 // Has to be loaded first: it configures the Carbon Sass modules the others share.
 @use 'carbon';
+@use 'sass:meta';
 @use '@carbon/element-styles/scss/elements/anchor';
 @use '@carbon/element-styles/scss/elements/block-quotation';
 @use '@carbon/element-styles/scss/elements/code';
@@ -120,81 +121,33 @@ $docs: '#storybook-docs .sbdocs-content';
   }
 }
 
-@include heading-level-1.styles(
-  (
-    selector: prose('h1'),
-  )
+// Carbon's element styles for everything a docs author can write.
+$-prose: (
+  'h1': 'heading-level-1',
+  'h2': 'heading-level-2',
+  'h3': 'heading-level-3',
+  'h4': 'heading-level-4',
+  'h5': 'heading-level-5',
+  'h6': 'heading-level-6',
+  'p': 'paragraph',
+  'ul': 'unordered-list',
+  'ol': 'ordered-list',
+  'a': 'anchor',
+  'code': 'code',
+  'blockquote': 'block-quotation',
+  'hr': 'horizontal-rule',
+  'details': 'details',
+  'table': 'table',
 );
-@include heading-level-2.styles(
-  (
-    selector: prose('h2'),
-  )
-);
-@include heading-level-3.styles(
-  (
-    selector: prose('h3'),
-  )
-);
-@include heading-level-4.styles(
-  (
-    selector: prose('h4'),
-  )
-);
-@include heading-level-5.styles(
-  (
-    selector: prose('h5'),
-  )
-);
-@include heading-level-6.styles(
-  (
-    selector: prose('h6'),
-  )
-);
-@include paragraph.styles(
-  (
-    selector: prose('p'),
-  )
-);
-@include unordered-list.styles(
-  (
-    selector: prose('ul'),
-  )
-);
-@include ordered-list.styles(
-  (
-    selector: prose('ol'),
-  )
-);
-@include anchor.styles(
-  (
-    selector: prose('a'),
-  )
-);
-@include code.styles(
-  (
-    selector: prose('code'),
-  )
-);
-@include block-quotation.styles(
-  (
-    selector: prose('blockquote'),
-  )
-);
-@include horizontal-rule.styles(
-  (
-    selector: prose('hr'),
-  )
-);
-@include details.styles(
-  (
-    selector: prose('details'),
-  )
-);
-@include table.styles(
-  (
-    selector: prose('table'),
-  )
-);
+
+@each $element, $module in $-prose {
+  @include meta.apply(
+    meta.get-mixin('styles', $module),
+    (
+      selector: prose($element),
+    )
+  );
+}
 
 #storybook-docs {
   // Story previews: a flat, bordered frame around a piece of the page. The

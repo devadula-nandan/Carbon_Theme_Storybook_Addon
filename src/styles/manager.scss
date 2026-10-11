@@ -131,9 +131,11 @@
 // Bars: the toolbar and the tab bars are layer 01 surfaces
 // ---------------------------------------------------------------------------
 
+// The tab bars of the settings pages and of the addon panel.
+$-tab-bars: '#main-content-wrapper > div > div:first-child, #storybook-panel-root > div:first-child';
+
 #root .sb-bar,
-#main-content-wrapper > div > div:first-child,
-#storybook-panel-root > div:first-child {
+#{$-tab-bars} {
   @include carbon.layer(1);
 }
 
@@ -182,9 +184,10 @@
 }
 
 // Bar actions that are not tabs, e.g. moving or hiding the addon panel.
-#main-content-wrapper > div > div:first-child button:not([role='tab']),
-#storybook-panel-root > div:first-child button:not([role='tab']) {
-  @include carbon.ghost-button(1);
+#{$-tab-bars} {
+  button:not([role='tab']) {
+    @include carbon.ghost-button(1);
+  }
 }
 
 // ---------------------------------------------------------------------------

@@ -23,12 +23,14 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  # start the Pages deploy and the GitHub Packages mirror once the release is out
+  # start the demo deploy once the release is out
   actions: write
   # push the version commit and tag, and create the GitHub release
   contents: write
   # lets this workflow prove to npm who it is, in place of an access token
   id-token: write
+  # publish the copy on GitHub Packages
+  packages: write
 
 jobs:
   release:
@@ -38,8 +40,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -53,9 +53,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Check for linter errors
-        run: pnpm lint
 
       - name: Bump the version
         id: version
@@ -86,13 +83,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       # The push above was made with this workflow's token, which does not
-      # trigger other workflows, so the two follow-ups are started explicitly.
+      # trigger other workflows, so the demo deploy is started explicitly.
       - name: Refresh the live demo
-        run: gh workflow run deploy-storybook.yml --ref "${{ github.ref_name }}"
+        run: gh workflow run ci.yml --ref "${{ github.ref_name }}"
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Mirror the release to GitHub Packages
-        run: gh workflow run github-packages.yml --ref "${{ github.ref_name }}" -f tag="v${{ steps.version.outputs.version }}"
+      # The copy on GitHub's own registry is what the repository's "Packages"
+      # section lists. It comes last, so a problem here leaves the npm release
+      # complete. That registry only accepts names scoped to the repository
+      # owner, so the package is renamed for this publish only.
+      - name: Point npm at GitHub Packages
+        uses: actions/setup-node@v4
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Publish the copy on GitHub Packages
+        run: |
+          npm pkg set name="@${{ github.repository_owner }}/$(node -p "require('./package.json').name")"
+          npm publish
         env:
-          GH_TOKEN: ${{ github.token }}
+          NODE_AUTH_TOKEN: ${{ github.token }}

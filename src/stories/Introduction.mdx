@@ -17,30 +17,8 @@ import {
   IconGallery,
   IconItem,
 } from "@storybook/addon-docs/blocks";
-import { useState, useEffect } from "react";
 import * as ExampleStories from "./Example.stories";
-
-export const RenderCounter = () => {
-  const [count, setCount] = useState(() =>
-    parseInt(localStorage.getItem("render-count") || "0"),
-  );
-  useEffect(() => {
-    const n = count + 1;
-    setCount(n);
-    localStorage.setItem("render-count", String(n));
-  }, []);
-  return (
-    <button
-      onClick={() => {
-        setCount(0);
-        localStorage.setItem("render-count", "0");
-      }}
-      style={{ cursor: "pointer" }}
-    >
-      Renders: {count} - Reset
-    </button>
-  );
-};
+import { RenderCounter } from "./RenderCounter";
 
 <Meta of={ExampleStories} />
 
@@ -373,7 +351,7 @@ Current year: {new Date().getFullYear()}
 
 ---
 
-<RenderCounter />
+<RenderCounter storageKey="render-count" />
 
 ---
 

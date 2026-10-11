@@ -135,18 +135,15 @@
       margin-block: 0;
       overflow: hidden;
 
-      &::-webkit-slider-runnable-track {
-        block-size: $thumb;
-        border-radius: 0;
-        box-shadow: none;
-        background: transparent;
-      }
-
-      &::-moz-range-track {
-        block-size: $thumb;
-        border-radius: 0;
-        box-shadow: none;
-        background: transparent;
+      // One rule per browser: a selector list would be dropped whole by a
+      // browser that doesn't know one of the pseudo-elements.
+      @each $track in ('::-webkit-slider-runnable-track', '::-moz-range-track') {
+        &#{$track} {
+          block-size: $thumb;
+          border-radius: 0;
+          box-shadow: none;
+          background: transparent;
+        }
       }
 
       @each $thumb-pseudo in ('::-webkit-slider-thumb', '::-moz-range-thumb') {

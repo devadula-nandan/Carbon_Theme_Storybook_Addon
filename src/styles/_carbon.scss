@@ -21,17 +21,20 @@
 @use 'sass:map';
 @use 'sass:math';
 
-/// Emits the Carbon tokens for the light (Gray 10) and dark (Gray 100) themes,
-/// keyed off the attribute the addon sets on `<html>`.
-@mixin tokens {
-  :root[data-carbon-theme='g10'] {
-    color-scheme: light;
-    @include element-styles.emit-carbon-tokens('g10');
-  }
+// The two Carbon themes the addon applies, and the colour scheme each one is.
+$-themes: (
+  'g10': light,
+  'g100': dark,
+);
 
-  :root[data-carbon-theme='g100'] {
-    color-scheme: dark;
-    @include element-styles.emit-carbon-tokens('g100');
+/// Emits the Carbon tokens for each theme, keyed off the attribute the addon
+/// sets on `<html>`.
+@mixin tokens {
+  @each $theme, $color-scheme in $-themes {
+    :root[data-carbon-theme='#{$theme}'] {
+      color-scheme: $color-scheme;
+      @include element-styles.emit-carbon-tokens($theme);
+    }
   }
 }
 
