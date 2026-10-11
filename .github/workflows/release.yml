@@ -1,33 +1,82 @@
 name: Release
 
-on: [push]
+# Run by hand from the Actions tab: pick how to bump the version, and the
+# workflow publishes that version to npm and tags it.
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        required: true
+        type: choice
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+
+run-name: Release (${{ inputs.bump }})
+
+# One release at a time.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  # push the version commit and tag, and create the GitHub release
+  contents: write
+  # lets npm attach provenance to the published package
+  id-token: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci') && github.repository != 'storybookjs/addon-kit'"
+    # main carries the latest Storybook major and is what npm's "latest" should be
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Prepare repository
-        run: git fetch --unshallow --tags
+        with:
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Create Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Check for linter errors
+        run: pnpm lint
+
+      - name: Bump the version
+        id: version
         run: |
-          pnpm run release
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm version "${{ inputs.bump }}" --message "Release v%s"
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Build addon
+        run: pnpm build
+
+      # Publishing comes before pushing: if it fails, the version commit and
+      # tag only ever existed in this run and there is nothing to clean up.
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push the version commit and tag
+        run: git push --atomic origin "HEAD:${{ github.ref_name }}" "v${{ steps.version.outputs.version }}"
+
+      - name: Create the GitHub release
+        run: gh release create "v${{ steps.version.outputs.version }}" --verify-tag --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}

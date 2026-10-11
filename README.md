@@ -26,9 +26,13 @@ Each Storybook major is supported from its own branch. `main` always tracks the 
 
 ## Usage
 
-The addon is not published to npm yet. To try it, open the [live demo](https://devadula-nandan.github.io/Carbon_Theme_Storybook_Addon/) or run the Storybook in this repo (see [Development](#development)).
+Install the addon:
 
-Once the package is installed in a project, register it in `.storybook/main.ts`. It needs `@storybook/addon-docs` alongside it:
+```sh
+npm install --save-dev storybook-carbon-theme
+```
+
+Then register it in `.storybook/main.ts`. It needs `@storybook/addon-docs` alongside it:
 
 ```ts
 const config = {
@@ -113,6 +117,12 @@ The addon code is in [`src`](./src):
 | `styles/manager.scss`   | Carbon details for the sidebar, toolbar, panels and menus     |
 | `styles/preview.scss`   | Carbon tokens for stories, plus docs page styles              |
 | `styles/_controls.scss` | The args table and its controls, shared by the panel and docs |
+
+### Releasing
+
+Releases are cut from `main` with the **Release** workflow, under the repository's Actions tab. Choose `patch`, `minor` or `major` and run it. The workflow bumps the version, publishes that version to npm, pushes the version commit and its tag, and creates a GitHub release.
+
+It publishes with the npm access token stored in the `NPM_TOKEN` repository secret.
 
 ## License
 
