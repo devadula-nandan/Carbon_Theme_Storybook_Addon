@@ -7,7 +7,7 @@ addons.setConfig({
   theme: create({
     base: 'light',
     brandTitle: 'Carbon theme',
-    brandUrl: 'https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon',
+    brandUrl: 'https://github.com/devadula-nandan/carbon-theme-storybook-addon',
     brandTarget: '_blank',
   }),
 });

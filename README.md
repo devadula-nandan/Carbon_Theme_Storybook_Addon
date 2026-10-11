@@ -2,9 +2,9 @@
 
 A Storybook addon that makes Storybook look like [Carbon Design System](https://carbondesignsystem.com): the sidebar, toolbar, addon panels and docs pages, in a light and a dark theme.
 
-This is the **Storybook 10** branch. For Storybook 9, see [`v9`](https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon/tree/v9).
+This is the **Storybook 10** branch. For Storybook 9, see [`v9`](https://github.com/devadula-nandan/carbon-theme-storybook-addon/tree/v9).
 
-[Live demo](https://devadula-nandan.github.io/Carbon_Theme_Storybook_Addon/)
+[Live demo](https://devadula-nandan.github.io/carbon-theme-storybook-addon/)
 
 ## Features
 
@@ -21,8 +21,8 @@ Each Storybook major is supported from its own branch. `main` always tracks the 
 
 | Storybook | Branch                                                                                            | Built against |
 | --------- | ------------------------------------------------------------------------------------------------- | ------------- |
-| 10        | [`main`](https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon/tree/main) (this branch) | 10.6.1        |
-| 9         | [`v9`](https://github.com/devadula-nandan/Carbon_Theme_Storybook_Addon/tree/v9)                   | 9.1.10        |
+| 10        | [`main`](https://github.com/devadula-nandan/carbon-theme-storybook-addon/tree/main) (this branch) | 10.6.1        |
+| 9         | [`v9`](https://github.com/devadula-nandan/carbon-theme-storybook-addon/tree/v9)                   | 9.1.10        |
 
 ## Usage
 
