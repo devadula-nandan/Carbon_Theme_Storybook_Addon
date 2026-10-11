@@ -65,9 +65,6 @@
 #storybook-explorer-tree {
   // Group headings.
   .sidebar-subheading button {
-    border-radius: 0;
-    color: theme.$text-secondary;
-
     &:first-child {
       @include type.type-style('label-01');
       text-transform: none;
@@ -138,8 +135,6 @@
 #main-content-wrapper > div > div:first-child,
 #storybook-panel-root > div:first-child {
   @include carbon.layer(1);
-  // The divider under a bar is drawn as an inset shadow.
-  box-shadow: inset 0 -0.0625rem 0 theme.$border-subtle;
 }
 
 #root .sb-bar {
@@ -157,7 +152,6 @@
     block-size: 2.5rem;
     min-inline-size: 2.5rem;
     padding-inline: spacing.$spacing-04;
-    justify-content: center;
     @include type.type-style('body-compact-01');
   }
 }
@@ -165,9 +159,7 @@
 // Carbon line tabs.
 #root [role='tablist'] [role='tab'] {
   @include type.type-style('body-compact-01');
-  border-radius: 0;
   border-block-end: 0.125rem solid transparent;
-  color: theme.$text-secondary;
 
   &:hover {
     color: theme.$text-primary;
@@ -201,11 +193,6 @@
 
 #storybook-panel-region {
   @include carbon.layer(1);
-
-  // Dividers that Storybook draws inside the panel.
-  [role='tabpanel'] {
-    border-color: theme.$border-subtle;
-  }
 }
 
 @include controls.styles('#storybook-panel-root');
@@ -240,7 +227,6 @@
     border-radius: 0;
     filter: none;
     box-shadow: 0 0.125rem 0.375rem theme.$shadow;
-    color: theme.$text-primary;
   }
 
   [role='listbox'] {
@@ -256,7 +242,6 @@
   .react-aria-Popover li > :is(a, button),
   [role='listbox'] > [role='option'] {
     @include type.type-style('body-compact-01');
-    border-radius: 0;
     color: theme.$text-secondary;
 
     :is(div, p) {
@@ -285,11 +270,11 @@
     &:focus-visible {
       @include carbon.focus;
     }
+  }
 
-    &[aria-selected='true'] {
-      background-color: carbon.on-surface('selected', 1);
-      color: theme.$text-primary;
-    }
+  [role='listbox'] > [role='option'][aria-selected='true'] {
+    background-color: carbon.on-surface('selected', 1);
+    color: theme.$text-primary;
   }
 
   // Tooltips use Carbon's inverse surface.
@@ -299,9 +284,5 @@
     box-shadow: 0 0.125rem 0.375rem theme.$shadow;
     background-color: theme.$background-inverse;
     color: theme.$text-inverse;
-  }
-
-  .react-aria-Tooltip .react-aria-OverlayArrow svg {
-    fill: theme.$background-inverse;
   }
 }

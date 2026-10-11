@@ -6,20 +6,7 @@ import tseslint from 'typescript-eslint';
 
 export default [
   {
-    ignores: [
-      '.github/dependabot.yml',
-      '!.*',
-      '*.tgz',
-      'dist/',
-      'coverage/',
-      'node_modules/',
-      'storybook-static/',
-      'build-storybook.log',
-      '.DS_Store',
-      '.env',
-      '.idea',
-      '.vscode',
-    ],
+    ignores: ['dist/', 'storybook-static/'],
   },
   js.configs.recommended,
   reactPlugin.configs.flat.recommended,

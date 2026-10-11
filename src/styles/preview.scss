@@ -197,22 +197,18 @@ $docs: '#storybook-docs .sbdocs-content';
 );
 
 #storybook-docs {
-  // Story previews: a bordered frame around a piece of the page.
+  // Story previews: a flat, bordered frame around a piece of the page. The
+  // border and background come from the docs theme.
   .sbdocs-preview {
-    border: 0.0625rem solid theme.$border-subtle;
-    border-radius: 0;
     box-shadow: none;
-    background-color: theme.$background;
 
     // The preview's toolbar is a layer 01 bar, like the main toolbar.
     > [role='toolbar'] {
       @include carbon.layer(1);
-      border-block-end: 0;
       box-shadow: inset 0 -0.0625rem 0 theme.$border-subtle;
 
       :is(button, a) {
         @include carbon.ghost-button(1);
-        border: 0;
       }
     }
   }
@@ -233,8 +229,6 @@ $docs: '#storybook-docs .sbdocs-content';
 
     // The corner that holds the copy button is accented, like a table header.
     > div:has(> button) {
-      border: 0;
-      border-radius: 0;
       background-color: carbon.on-surface('accent', 1);
     }
 
@@ -251,7 +245,6 @@ $docs: '#storybook-docs .sbdocs-content';
   // "Show code" and "Copy code" sit straight on the page.
   .sbdocs-preview-actions :is(button, a) {
     @include carbon.ghost-button(0);
-    border: 0;
   }
 
   .sbdocs-preview-actions :is(button, a),

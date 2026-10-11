@@ -43,19 +43,12 @@
     "lint": "eslint --cache .",
     "lint:fix": "pnpm lint --fix",
     "start": "pnpm build && run-p build:watch \"storybook --quiet\"",
-    "storybook": "storybook dev -p 6006",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "storybook": "storybook dev -p 6006"
   },
   "devDependencies": {
-    "@carbon/colors": "^11.60.0",
     "@carbon/element-styles": "^0.4.0",
-    "@carbon/feature-flags": "^1.10.0",
-    "@carbon/grid": "^11.64.0",
-    "@carbon/layout": "^11.61.0",
-    "@carbon/motion": "^11.54.0",
     "@carbon/styles": "^1.117.0",
     "@carbon/themes": "^11.83.0",
-    "@carbon/type": "^11.69.0",
     "@eslint/js": "^9.36.0",
     "@storybook/addon-a11y": "^10.6.1",
     "@storybook/addon-docs": "^10.6.1",
@@ -63,7 +56,6 @@
     "@storybook/react-vite": "^10.6.1",
     "@types/node": "^20",
     "@types/react": "^18.2.65",
-    "@types/react-dom": "^18.2.21",
     "@vitejs/plugin-react": "^4.7.0",
     "esbuild-sass-plugin": "^3.6.0",
     "eslint": "^9.36.0",

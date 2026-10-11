@@ -48,7 +48,6 @@ const meta: Meta = {
 };
 
 export default meta;
-// type Story = StoryObj;
 
 /**
  * COLOR TOKEN
@@ -83,7 +82,6 @@ export const ColorToken: StoryObj<ColorTokenArgs> = {
           aspectRatio: '1',
           height: 'min(70vh, 200px)',
           backgroundColor: `var(${args.colorToken})`,
-          // border: "1px solid var(--cds-background-inverse",
         }}
       >
         <p
@@ -92,7 +90,6 @@ export const ColorToken: StoryObj<ColorTokenArgs> = {
             color: 'var(--cds-background)',
             fontFamily: 'IBM Plex Sans',
             fontSize: '14px',
-            // display: "inline-block",
             paddingInline: '0.4rem',
             margin: '0',
           }}

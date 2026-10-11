@@ -21,7 +21,6 @@
   #{$table} {
     @include carbon.layer(1);
     @include type.type-style('body-compact-01');
-    color: theme.$text-primary;
 
     // Carbon data table: an accented header, then rows split by subtle dividers.
     .docblock-argstable-head th {
@@ -30,18 +29,14 @@
       color: theme.$text-primary;
 
       span {
-        font: inherit;
         color: inherit;
       }
     }
 
     .docblock-argstable-body {
-      border-radius: 0;
-      box-shadow: none;
       filter: none;
 
       > tr > td {
-        border-radius: 0;
         border-inline: 0;
         border-block-start: 0;
         border-block-end: 0.0625rem solid theme.$border-subtle;
@@ -111,8 +106,6 @@
         @include type.type-style('body-compact-01');
         padding: spacing.$spacing-02 spacing.$spacing-05;
         border-radius: 0.25rem;
-        box-shadow: none;
-        background-color: transparent;
         color: theme.$text-secondary;
       }
 
@@ -141,7 +134,6 @@
       block-size: $thumb;
       margin-block: 0;
       overflow: hidden;
-      background: transparent;
 
       &::-webkit-slider-runnable-track {
         block-size: $thumb;
@@ -184,11 +176,6 @@
           background: theme.$interactive;
         }
       }
-    }
-
-    // Buttons inside the table: reset, object editor actions, colour swatch.
-    button {
-      border-radius: 0;
     }
   }
 

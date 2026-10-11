@@ -1,2 +1,7 @@
 onlyBuiltDependencies:
   - esbuild
+
+# Carbon's Sass imports its sibling packages by name (`@use '@carbon/layout'`).
+# Hoisting them puts them where Sass looks, at the versions @carbon/styles asks for.
+publicHoistPattern:
+  - '@carbon/*'
