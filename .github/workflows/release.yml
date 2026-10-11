@@ -29,8 +29,6 @@ permissions:
   contents: write
   # lets this workflow prove to npm who it is, in place of an access token
   id-token: write
-  # publish the copy on GitHub Packages
-  packages: write
 
 jobs:
   release:
@@ -88,19 +86,3 @@ jobs:
         run: gh workflow run ci.yml --ref "${{ github.ref_name }}"
         env:
           GH_TOKEN: ${{ github.token }}
-
-      # The copy on GitHub's own registry is what the repository's "Packages"
-      # section lists. It comes last, so a problem here leaves the npm release
-      # complete. That registry only accepts names scoped to the repository
-      # owner, so the package is renamed for this publish only.
-      - name: Point npm at GitHub Packages
-        uses: actions/setup-node@v4
-        with:
-          registry-url: 'https://npm.pkg.github.com'
-
-      - name: Publish the copy on GitHub Packages
-        run: |
-          npm pkg set name="@${{ github.repository_owner }}/$(node -p "require('./package.json').name")"
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ github.token }}
