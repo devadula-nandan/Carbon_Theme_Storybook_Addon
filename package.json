@@ -1,6 +1,6 @@
 {
   "name": "storybook-carbon-theme",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Carbon Design System light and dark themes for the Storybook UI, docs pages and stories",
   "keywords": [
     "storybook-addon",
